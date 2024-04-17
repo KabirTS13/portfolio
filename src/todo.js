@@ -59,7 +59,7 @@ function TodoList() {
 
 
     return (
-      <div className="flex flex-col items-center justify-center min-h-50vh w-2/5 bg-gray-700 p-6 m-10 rounded-lg shadow-md hover:shadow-lg transition duration-300 ml-auto mr-10">
+      <div className="flex flex-col items-center justify-center h-96 w-2/5 bg-gray-700 p-6 m-10 rounded-lg shadow-md hover:shadow-lg transition duration-300 ml-auto mr-10" >
         <h1 className="text-2xl font-bold text-white mb-4">Todo List</h1>
         <div className="flex gap-2 mb-4">
             <input type="text" placeholder="Enter Todo..." value={todoInput} onChange={(e) => setTodoInput(e.target.value)} className="form-input px-4 py-2 border rounded"/>

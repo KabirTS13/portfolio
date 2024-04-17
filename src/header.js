@@ -38,6 +38,9 @@ function Header() {
                 // Store the image URL in Firestore
                 const docRef = doc(db, 'headerImages', 'uploadedImage');
                 await setDoc(docRef, { imageUrl });
+
+                // Hide the upload button
+                setSelectedImage(null);
             })
             .catch((error) => {
                 console.error('Error uploading header image:', error);
@@ -53,6 +56,12 @@ function Header() {
                     className="absolute inset-0 object-cover w-full h-full"
                 />
             )}
+
+            <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-black bg-opacity-50 p-4 rounded-md">
+                    <h1 className="text-8xl font-bold text-white p-4 font-mono">Kabir Sharma</h1>
+                </div>
+            </div>
 
             <div className="absolute bottom-0 left-0 p-4 flex items-center">
                 <label htmlFor="fileInput">
