@@ -47,6 +47,7 @@ function Header() {
             });
     };
 
+
     return (
         <header className="h-96 relative bg-cover bg-center flex items-center justify-center text-white">
             {uploadedImageUrl && (
