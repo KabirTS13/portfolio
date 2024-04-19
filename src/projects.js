@@ -12,13 +12,14 @@ function Project() {
     const [projects] = useCollectionData(q, { idField: 'id' });
 
     const [linkInput, setLinkInput] = useState('');
+    const [titleInput, setTitleInput] = useState('');
     const [descriptionInput, setDescriptionInput] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [editing, setEditing] = useState(false); // State to track if editing mode is active
     const [currentProjectIndex, setCurrentProjectIndex] = useState(0); // State to track the index of the current project
 
     const addProject = async () => {
-        if (!linkInput.trim() || !descriptionInput.trim() || !imageFile) return;
+        if (!linkInput.trim() || !titleInput.trim() || !imageFile) return;
 
         const storageRef = ref(storage, `projectImages/${imageFile.name}`);
         const snapshot = await uploadBytes(storageRef, imageFile);
@@ -26,7 +27,8 @@ function Project() {
 
         const docRef = await addDoc(projectsRef, {
             link: linkInput,
-            text: descriptionInput,
+            text: titleInput,
+            description: descriptionInput,
             imageUrl: imageUrl,
             createdAt: new Date()
         });
@@ -36,6 +38,7 @@ function Project() {
         await updateDoc(doc(projectsRef, projectId), { id: projectId });
 
         setLinkInput('');
+        setTitleInput('');
         setDescriptionInput('');
         setImageFile(null);
         setEditing(false); // Exit editing mode after adding a project
@@ -43,11 +46,6 @@ function Project() {
 
     const deleteProject = async (id) => {
         await deleteDoc(doc(db, 'projects', id))
-    }
-
-    const handleEdit = () => {
-        setEditing(true); // Activate editing mode when edit icon is clicked
-        console.log("clicked")
     }
 
     const handleNextProject = () => {
@@ -59,23 +57,27 @@ function Project() {
     }
 
     return (
-        <div className="flex justify-center h-96">
+        <div className="flex flex-col items-center justify-center h-96 w-2/5 bg-gray-700 p-6 m-10 rounded-lg shadow-md hover:shadow-lg transition duration-300 ml-auto mr-10" >
             <div className="w-40%">
                 <div className="project-form flex items-center mb-4">
                     {!editing ? (
-                        <button onClick={handleEdit} className="text-gray-600 hover:text-red-900 focus:outline-none h-52 w-52">
+                        <button onClick={() => setEditing(true)} className="text-gray-600 hover:text-red-900 focus:outline-none h-52 w-52">
                             <FontAwesomeIcon icon={faEdit} />
                         </button>
                     ) : (
                         <>
                             <input type="text" placeholder="Enter Link..." value={linkInput} onChange={(e) => setLinkInput(e.target.value)} className="mr-2 px-2 py-1 border border-gray-300 rounded" />
-                            <input type="text" placeholder="Enter Text..." value={descriptionInput} onChange={(e) => setDescriptionInput(e.target.value)} className="mr-2 px-2 py-1 border border-gray-300 rounded" />
+                            <input type="text" placeholder="Enter Text..." value={titleInput} onChange={(e) => setTitleInput(e.target.value)} className="mr-2 px-2 py-1 border border-gray-300 rounded" />
+                            <input type="text" placeholder="Enter Project Description..." value={descriptionInput} onChange={(e) => setDescriptionInput(e.target.value)} className="mr-2 px-2 py-1 border border-gray-300 rounded" />
                             <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} className="mr-2 hidden" id="file-upload" />
                             <label htmlFor="file-upload" className="mr-2 cursor-pointer">
                                 <FontAwesomeIcon icon={faUpload} />
                             </label>
                             <button onClick={addProject} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                 <FontAwesomeIcon icon={faPlus} />
+                            </button>
+                            <button onClick={() => setEditing(false)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                Cancel
                             </button>
                         </>
                     )}
@@ -96,6 +98,7 @@ function Project() {
                     <div key={projects[currentProjectIndex].id} className="text-center">
                         <a href={projects[currentProjectIndex].link} target="_blank" rel="noopener noreferrer">{projects[currentProjectIndex].text}</a>
                         <img src={projects[currentProjectIndex].imageUrl} alt="Project" className="mx-auto" />
+                        <p>{projects[currentProjectIndex].description}</p>
                         <button onClick={() => deleteProject(projects[currentProjectIndex].id)} className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Delete</button>
                     </div>
                 )}
