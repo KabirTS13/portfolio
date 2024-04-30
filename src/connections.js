@@ -111,7 +111,7 @@ function Connections () {
     };
 
 
-    const addDescription = async() => {
+    const addIntro = async() => {
         if (!description.trim() || !imageFile) {
             alert("Please make sure to complete all of the fields and upload an image.")
             return;
@@ -188,7 +188,47 @@ function Connections () {
 
     return (
         <div className="flex flex-col items-center justify-center h-80 w-2.5/5 bg-gray-800 p-6 m-10 rounded-lg shadow-md hover:shadow-lg transition duration-300  mr-10">
+            {connections && connections.length >0 ? ( //If there is the introduction part created
+                <>
+                </>
+            ) : ( //If there isn't an introduction part created
+                <>
+                    {!creating ? ( //Code to tell the user to create an introduction and enter a link
+                        <>
+                            <div className="flex items-center justify-center mb-4"> 
+                                <p className="inline text-xl font-semibold text-white">Add a bit about yourself and upload your image!</p>
+                                <button onClick={() => setCreating(true)} className="flex items-center justify-center text-gray-100 m-2 p-2 hover:bg-gray-900 bg-opacity-75 focus:outline-none rounded-lg">
+                                    <FontAwesomeIcon icon={faPlus} className="w-5 h-5"/>
+                                </button>
+                            </div>
+                            
+                            
+                        </>
+                    ) : ( //Allow user to enter their introduction and their first connection
+                        <>
+                            <div className="flex flex-col items-center mb-4"> 
 
+                                {/* //Input fields  */}
+                                <textarea placeholder="Enter your bio..." value={description} onChange={(e) => setDescription(e.target.value)} className="mr-2 mb-2 px-2 py-1 border border-gray-300 rounded overflow-auto overflow-y-auto h-16 max-h-96 w-64" />
+                                <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} className="mr-2 mb-2 hidden" id="file-upload" />
+                                
+                                {/* //Buttons to upload image, add project, or cancel. */}
+                                <div className="flex mb-2">
+                                    <label htmlFor="file-upload" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2 focus:outline-none focus:shadow-outline">
+                                        <FontAwesomeIcon icon={faUpload} />
+                                    </label>
+                                    <button onClick={addIntro} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2 focus:outline-none focus:shadow-outline">
+                                        <FontAwesomeIcon icon={faPlus} />
+                                    </button>
+                                    <button onClick={() => setCreating(false)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                        <FontAwesomeIcon icon={faTimes} />
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </>
+            )}
         </div>
     )
 }
