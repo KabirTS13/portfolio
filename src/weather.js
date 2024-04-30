@@ -45,7 +45,7 @@ function Weather(){
   const iconUrl = `https://openweathermap.org/img/w/${iconCode}.png`;
 
   return (
-    <div className="flex flex-col items-center justify-center h-80 w-2/5 bg-gray-800 p-6 m-10 rounded-lg shadow-md hover:shadow-lg transition duration-300 ml-auto mr-10">
+    <div className="flex flex-col items-center justify-center h-80 w-1.5/5 bg-gray-800 p-6 m-10 rounded-full shadow-md hover:shadow-lg transition duration-300 ml-auto mr-10">
         <h2 className="text-2xl font-bold text-white mb-4">{city}</h2>
         <img src={iconUrl} alt="Weather icon" className="w-20 h-20" />
         <p className="text-lg mt-2 text-white">Temperature: {weather.main.temp}°C</p>
