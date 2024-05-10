@@ -35,6 +35,7 @@ function Connections () {
     const [creating, setCreating] = useState(false);
     const [creatingIntro, setCreatingIntro] = useState(false); //Will only be used once in the beginning
     const [currentIndex, setCurrentIndex] = useState(0); 
+    const [currentIndex2, setCurrentIndex2] = useState(1); 
 
 
     const addLink = async() => {
@@ -90,8 +91,7 @@ function Connections () {
             await updateDoc(doc(db, 'connections', id), {
                 link: editLink,
                 title: editLinkTitle,
-                imageUrl: editLinkImage,
-                createdAt: new Date()
+                imageUrl: editLinkImage
             });
         } else {
             // Prepare storage reference and upload image
@@ -103,8 +103,7 @@ function Connections () {
             await updateDoc(doc(db, 'connections', id), {
                 link: editLink,
                 title: editLinkTitle,
-                imageUrl: imageUrl,
-                createdAt: new Date()
+                imageUrl: imageUrl
             });
         }
 
@@ -186,10 +185,12 @@ function Connections () {
 
     const handleNextLink = () => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % connections.length); 
+        setCurrentIndex2((prevIndex) => (prevIndex + 1) % connections.length); 
     };
 
     const handlePreviousLink = () => {
         setCurrentIndex((prevIndex) => (prevIndex - 1 + connections.length) % connections.length); 
+        setCurrentIndex2((prevIndex) => (prevIndex - 1 + connections.length) % connections.length); 
     };
 
     return (
@@ -200,7 +201,7 @@ function Connections () {
                         <div className="flex flex-col items-center mb-4"> 
                              <h1 className="text-2xl font-bold text-white m-3 underline">Edit Bio:</h1>
                             {/* //Input fields  */}
-                            <textarea placeholder="Enter your bio..." value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="mr-2 mb-2 px-2 py-1 border border-gray-300 rounded overflow-auto overflow-y-auto h-16 max-h-96 w-64" />
+                            <textarea placeholder="Enter your bio..." value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="mr-2 mb-2 px-2 py-1 border border-gray-300 rounded overflow-auto overflow-y-auto h-36 max-h-96 w-64" />
                             <input type="file" accept="image/*" onChange={(e) => setEditImageFile(e.target.files[0])} className="mr-2 mb-2 hidden" id="file-upload" />
                             
                             {/* //Buttons to upload image, add project, or cancel. */}
@@ -230,7 +231,7 @@ function Connections () {
                             <div >
                                 { connections && connections.length >0 ? ( // If there are connections created
                                     !creating ? ( //If the user is not creating a connection
-                                        editLinkId === connections[currentIndex].id ? ( //If the user is editing a link/connection
+                                        editLinkId != "" ? ( //If the user is editing a link/connection
                                             <div className="flex flex-col items-center mb-4"> 
                                                 <h1 className="text-2xl font-bold text-white m-3 underline">Edit Link:</h1>
                                                 {/* //Input fields  */} 
@@ -243,8 +244,8 @@ function Connections () {
                                                     <label htmlFor="file-upload" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2 focus:outline-none focus:shadow-outline">
                                                         <FontAwesomeIcon icon={faUpload} />
                                                     </label>
-                                                    <button onClick={ () => saveEditLinks(connections[0].id)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2 focus:outline-none focus:shadow-outline">
-                                                        <FontAwesomeIcon icon={faPlus} />
+                                                    <button onClick={ () => saveEditLinks(editLinkId)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2 focus:outline-none focus:shadow-outline">
+                                                        <FontAwesomeIcon icon={faCheck} />
                                                     </button>
                                                     <button onClick={() => setEditLinkId('')} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                                         <FontAwesomeIcon icon={faTimes} />
@@ -253,7 +254,7 @@ function Connections () {
                                             </div>
                                         ) : ( //If the user is not editing a link
 
-                                        connections.length === 1 ? (
+                                        connections.length === 1 ? ( // There is only 1 connection
                                             <div className="ml-12">
                                                 <div className="flex flex-col items-center">
                                                 <div className="flex items-center justify-center mb-0 bg-gray-800 bg-opacity-75 p-3 rounded-lg pt-0"> 
@@ -280,7 +281,7 @@ function Connections () {
                                             </div>
                                             </div>
                                         ) : (
-                                            connections.length === 2 ? (
+                                            connections.length === 2 ? ( //There are only 2 connections
                                                 <div className="flex flex-col items-center justify-center">
                                                     <div className="flex items-center justify-center mb-0 bg-gray-800 bg-opacity-75 p-3 rounded-lg pt-0"> {/* "Connections" heading */}
                                                         <h1 className="text-2xl font-bold text-white m-3 underline">Connections</h1>
@@ -291,24 +292,6 @@ function Connections () {
                                                     <div className="flex items-center justify-center">
                                                         {/* First conneciton */}
                                                         <div className="ml-6"> {/* Outer container...just to give some margin left from the bio part */}
-                                                            <div className="flex flex-col items-center"> {/* Outer container to center align all of the items */}
-                                                                <img className="h-36 w-36 m-auto rounded-full" src={connections[currentIndex+1].imageUrl} />
-                                                                <div className="mt-2 mb-2">
-                                                                    <a className="inline text-xl font-semibold text-white hover:text-gray-400" href={connections[currentIndex+1].link} target="_blank" rel="noopener noreferrer">{connections[currentIndex].title}</a>
-                                                                </div>
-                                                                <div className="flex items-center justify-center mb-4"> {/* Center aligning creating button */}
-                                                                    <button onClick={() => editLinks(connections[currentIndex+1].id)} className="flex items-center justify-center  hover:bg-gray-500 hover:text-white text-gray-400 font-bold py-1 px-1 ml-1 rounded focus:outline-none focus:shadow-outline">
-                                                                        <FontAwesomeIcon icon={faEdit} className="w-3 h-4"/>
-                                                                    </button>
-                                                                    <button onClick={() => deleteLink(connections[currentIndex+1].id)} className="flex items-center justify-center  hover:bg-red-500 hover:text-white text-gray-400 font-bold py-1 px-1 rounded focus:outline-none focus:shadow-outline">
-                                                                        <FontAwesomeIcon icon={faTrash} className="w-3 h-4"/>
-                                                                    </button>
-                                                                </div>  
-                                                            </div>
-                                                        </div>
-                                                        
-                                                        {/* Second Conneciton */}
-                                                        <div className="ml-6"> {/* Outer container...just to give some margin left from the first connections */}
                                                             <div className="flex flex-col items-center"> {/* Outer container to center align all of the items */}
                                                                 <img className="h-36 w-36 m-auto rounded-full" src={connections[currentIndex].imageUrl} />
                                                                 <div className="mt-2 mb-2">
@@ -324,32 +307,82 @@ function Connections () {
                                                                 </div>  
                                                             </div>
                                                         </div>
+                                                        
+                                                        {/* Second Conneciton */}
+                                                        <div className="ml-6"> {/* Outer container...just to give some margin left from the first connections */}
+                                                            <div className="flex flex-col items-center"> {/* Outer container to center align all of the items */}
+                                                                <img className="h-36 w-36 m-auto rounded-full" src={connections[currentIndex2].imageUrl} />
+                                                                <div className="mt-2 mb-2">
+                                                                    <a className="inline text-xl font-semibold text-white hover:text-gray-400" href={connections[currentIndex2].link} target="_blank" rel="noopener noreferrer">{connections[currentIndex2].title}</a>
+                                                                </div>
+                                                                <div className="flex items-center justify-center mb-4"> {/* Center aligning creating button */}
+                                                                    <button onClick={() => editLinks(connections[currentIndex2].id)} className="flex items-center justify-center  hover:bg-gray-500 hover:text-white text-gray-400 font-bold py-1 px-1 ml-1 rounded focus:outline-none focus:shadow-outline">
+                                                                        <FontAwesomeIcon icon={faEdit} className="w-3 h-4"/>
+                                                                    </button>
+                                                                    <button onClick={() => deleteLink(connections[currentIndex2].id)} className="flex items-center justify-center  hover:bg-red-500 hover:text-white text-gray-400 font-bold py-1 px-1 rounded focus:outline-none focus:shadow-outline">
+                                                                        <FontAwesomeIcon icon={faTrash} className="w-3 h-4"/>
+                                                                    </button>
+                                                                </div>  
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            ) : (
-                                                <div>
-                                            <div className="flex items-center justify-center mb-0 bg-gray-800 bg-opacity-75 p-3 rounded-lg pt-0"> 
-                                                <h1 className="text-2xl font-bold text-white m-3 underline">Connections</h1>
-                                                <button onClick={() => setCreating(true)} className="flex items-center justify-center text-gray-400 ml-0 m-3 p-2 hover:bg-gray-900 bg-opacity-75 focus:outline-none rounded-lg">
-                                                    <FontAwesomeIcon icon={faPlus} className="h-6 w-6"/>
-                                                </button>
-                                            </div>
-                                            
-                                            <div className="flex flex-col items-center mb-4">
-                                                <img className="h-24 w-24 m-auto" src={connections[currentIndex].imageUrl} />
-                                                <div>
-                                                    <a className="inline text-xs font-semibold text-white" href={connections[currentIndex].link} target="_blank" rel="noopener noreferrer">{connections[currentIndex].title}</a>
+                                            ) : ( //There are 3+ connections
+                                                <div className="flex flex-col items-center justify-center">
+                                                    <div className="flex items-center justify-center mb-0 bg-gray-800 bg-opacity-75 p-3 rounded-lg pt-0"> {/* "Connections" heading */}
+                                                        <h1 className="text-2xl font-bold text-white m-3 underline">Connections</h1>
+                                                        <button onClick={() => setCreating(true)} className="flex items-center justify-center text-gray-400 ml-0 m-3 p-2 hover:bg-gray-900 bg-opacity-75 focus:outline-none rounded-lg">
+                                                            <FontAwesomeIcon icon={faPlus} className="h-6 w-6"/>
+                                                        </button>
+                                                    </div>
+                                                    <div className="flex items-center justify-center"> {/* Div containing the connections */}
+                                                        <div> {/* Previous button */}
+                                                            <button onClick={handlePreviousLink} className="text-white hover:text-gray-400 focus:outline-none mb-12">
+                                                                <FontAwesomeIcon icon={faArrowLeft} />
+                                                            </button>
+                                                        </div>
+                                                        {/* First conneciton */}
+                                                        <div className="ml-6"> {/* Outer container...just to give some margin left from the bio part */}
+                                                            <div className="flex flex-col items-center"> {/* Outer container to center align all of the items */}
+                                                                <img className="h-32 w-32 m-auto rounded-full" src={connections[currentIndex].imageUrl} />
+                                                                <div className="mt-2 mb-2">
+                                                                    <a className="inline text-sm font-semibold text-white hover:text-gray-400" href={connections[currentIndex].link} target="_blank" rel="noopener noreferrer">{connections[currentIndex].title}</a>
+                                                                </div>
+                                                                <div className="flex items-center justify-center mb-4"> {/* Center aligning creating button */}
+                                                                    <button onClick={() => editLinks(connections[currentIndex].id)} className="flex items-center justify-center  hover:bg-gray-500 hover:text-white text-gray-400 font-bold py-1 px-1 ml-1 rounded focus:outline-none focus:shadow-outline">
+                                                                        <FontAwesomeIcon icon={faEdit} className="w-3 h-4"/>
+                                                                    </button>
+                                                                    <button onClick={() => deleteLink(connections[currentIndex].id)} className="flex items-center justify-center  hover:bg-red-500 hover:text-white text-gray-400 font-bold py-1 px-1 rounded focus:outline-none focus:shadow-outline">
+                                                                        <FontAwesomeIcon icon={faTrash} className="w-3 h-4"/>
+                                                                    </button>
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        {/* Second Conneciton */}
+                                                        <div className="ml-6"> {/* Outer container...just to give some margin left from the first connections */}
+                                                            <div className="flex flex-col items-center"> {/* Outer container to center align all of the items */}
+                                                                <img className="h-32 w-32 m-auto rounded-full" src={connections[currentIndex2].imageUrl} />
+                                                                <div className="mt-2 mb-2">
+                                                                    <a className="inline text-sm font-semibold text-white hover:text-gray-400" href={connections[currentIndex2].link} target="_blank" rel="noopener noreferrer">{connections[currentIndex2].title}</a>
+                                                                </div>
+                                                                <div className="flex items-center justify-center mb-4"> {/* Center aligning creating button */}
+                                                                    <button onClick={() => editLinks(connections[currentIndex2].id)} className="flex items-center justify-center  hover:bg-gray-500 hover:text-white text-gray-400 font-bold py-1 px-1 ml-1 rounded focus:outline-none focus:shadow-outline">
+                                                                        <FontAwesomeIcon icon={faEdit} className="w-3 h-4"/>
+                                                                    </button>
+                                                                    <button onClick={() => deleteLink(connections[currentIndex2].id)} className="flex items-center justify-center  hover:bg-red-500 hover:text-white text-gray-400 font-bold py-1 px-1 rounded focus:outline-none focus:shadow-outline">
+                                                                        <FontAwesomeIcon icon={faTrash} className="w-3 h-4"/>
+                                                                    </button>
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <div> {/* Next link button */}
+                                                            <button onClick={handleNextLink} className="text-white hover:text-gray-900 focus:outline-none mb-14 ml-4">
+                                                                <FontAwesomeIcon icon={faArrowRight} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="flex items-center justify-center mb-4"> {/* Center aligning creating button */}
-                                                    <button onClick={() => editLinks(connections[currentIndex].id)} className="flex items-center justify-center  hover:bg-gray-500 hover:text-white text-gray-400 font-bold py-1 px-1 ml-1 rounded focus:outline-none focus:shadow-outline">
-                                                        <FontAwesomeIcon icon={faEdit} className="w-3 h-4"/>
-                                                    </button>
-                                                    <button onClick={() => deleteLink(connections[currentIndex].id)} className="flex items-center justify-center  hover:bg-red-500 hover:text-white text-gray-400 font-bold py-1 px-1 rounded focus:outline-none focus:shadow-outline">
-                                                        <FontAwesomeIcon icon={faTrash} className="w-3 h-4"/>
-                                                    </button>
-                                                </div>  
-                                            </div>
-                                        </div>
                                             )
                                         )
                                         )
