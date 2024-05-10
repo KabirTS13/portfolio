@@ -85,17 +85,17 @@ function Project() {
     
   
     const saveEditProject = async (id) => {
-        if (titleInput.length > 25) {
+        if (editProjectTitle.length > 25) {
             alert("Enter a shorter title.");
             return;
         }
+        
         if (typeof editProjectImage === 'string') {
             await updateDoc(doc(db, 'projects', id), {
                 link: editProjectLink,
                 text: editProjectTitle,
                 description: editProjectDescription,
-                imageUrl: editProjectImage,
-                createdAt: new Date()
+                imageUrl: editProjectImage
             });
         } else {
             // Prepare storage reference and upload image

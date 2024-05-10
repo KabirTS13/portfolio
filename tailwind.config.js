@@ -10,10 +10,11 @@ module.exports = {
         '1.5/5': "35%",
       },
       height: {
-        '128': '32rem', 
+        '128': '32rem',
       },
       maxHeight: {
         'projects': '30rem',
+        "19" : "4rem", 
       },
       maxWidth: {
         'projects': '35rem',
